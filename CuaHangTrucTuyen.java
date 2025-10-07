@@ -106,29 +106,6 @@ class DonHang {
         return tong;
     }
     
-    public void thanhToan() {
-        if (danhSachSanPham.isEmpty()) {
-            System.out.println("Don hang trong! Khong the thanh toan.");
-            return;
-        }
-        if (phuongThucThanhToan == null) {
-            System.out.println("Chua chon phuong thuc thanh toan!");
-            return;
-        }
-        
-        double tongTien = tinhTongTien();
-        System.out.println("\n=== THANH TOAN DON HANG ===");
-        System.out.println("Khach hang: " + tenKhachHang);
-        System.out.println("Danh sach san pham:");
-        for (int i = 0; i < danhSachSanPham.size(); i++) {
-            System.out.println((i + 1) + ". " + danhSachSanPham.get(i).toString());
-        }
-        System.out.printf("Tong tien: %.0f VND\n", tongTien);
-        System.out.print("Ket qua: ");
-        phuongThucThanhToan.thanhToan(tongTien);
-        System.out.println("Cam on quy khach!");
-    }
-    
     public void hienThiChiTiet() {
         System.out.println("\n=== CHI TIET DON HANG ===");
         System.out.println("Khach hang: " + tenKhachHang);
@@ -136,4 +113,3 @@ class DonHang {
         System.out.printf("Tong tien: %.0f VND\n", tinhTongTien());
     }
 }
-
