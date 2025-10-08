@@ -1,115 +1,53 @@
-import java.util.*;
+import product.*;
+import payment.*;
+import order.*;
 
-interface PhuongThucThanhToan {
-    void thanhToan(double soTien);
-}
+public class CuaHangTrucTuyen {
 
-class TienMat implements PhuongThucThanhToan {
-    @Override
-    public void thanhToan(double soTien) {
-        System.out.printf("Thanh toan tien mat thanh cong. So tien: %.0f VND\n", soTien);
-    }
-}
-
-class TheTinDung implements PhuongThucThanhToan {
-    @Override
-    public void thanhToan(double soTien) {
-        System.out.printf("Thanh toan bang the tin dung thanh cong. So tien: %.0f VND\n", soTien);
-    }
-}
-
-class ViMomo implements PhuongThucThanhToan {
-    @Override
-    public void thanhToan(double soTien) {
-        System.out.printf("Thanh toan bang vi MoMo thanh cong. So tien: %.0f VND\n", soTien);
-    }
-}
-
-abstract class SanPham {
-    protected String ma;
-    protected String ten;
-    protected double gia;
-    
-    public SanPham(String ma, String ten, double gia) {
-        this.ma = ma;
-        this.ten = ten;
-        this.gia = gia;
-    }
-    
-    public double getGia() {
-        return gia;
-    }
-    
-    @Override
-    public abstract String toString();
-}
-
-class SanPhamDienTu extends SanPham {
-    private String imei;
-    private String baoHanh;
-    
-    public SanPhamDienTu(String ma, String ten, double gia, String imei, String baoHanh) {
-        super(ma, ten, gia);
-        this.imei = imei;
-        this.baoHanh = baoHanh;
-    }
-    
-    @Override
-    public String toString() {
-        return String.format("San pham dien tu - Ma: %s, Ten: %s, Gia: %.0f VND, IMEI: %s, Bao hanh: %s", 
-                           ma, ten, gia, imei, baoHanh);
-    }
-}
-
-class SanPhamThucPham extends SanPham {
-    private String hanSuDung;
-    
-    public SanPhamThucPham(String ma, String ten, double gia, String hanSuDung) {
-        super(ma, ten, gia);
-        this.hanSuDung = hanSuDung;
-    }
-    
-    @Override
-    public String toString() {
-        return String.format("San pham thuc pham - Ma: %s, Ten: %s, Gia: %.0f VND, Han su dung: %s", 
-                           ma, ten, gia, hanSuDung);
-    }
-}
-
-class DonHang {
-    private String tenKhachHang;
-    private List<SanPham> danhSachSanPham;
-    private PhuongThucThanhToan phuongThucThanhToan;
-    
-    public DonHang(String tenKhachHang) {
-        this.tenKhachHang = tenKhachHang;
-        this.danhSachSanPham = new ArrayList<>();
-    }
-    
-    public void themSanPham(SanPham sp) {
-        danhSachSanPham.add(sp);
-    }
-    
-    public void themDanhSachSanPham(List<SanPham> ds) {
-        danhSachSanPham.addAll(ds);
-    }
-    
-    public void setPhuongThucThanhToan(PhuongThucThanhToan pt) {
-        this.phuongThucThanhToan = pt;
-    }
-    
-    public double tinhTongTien() {
-        double tong = 0;
-        for (SanPham sp : danhSachSanPham) {
-            tong += sp.getGia();
+    private static PhuongThucThanhToan chonPhuongThuc(String loai) {
+        switch (loai.toLowerCase()) {
+            case "tienmat":
+                return new TienMat();
+            case "thetindung":
+                return new TheTinDung();
+            case "momo":
+                return new ViMomo();
+            default:
+                throw new IllegalArgumentException("Phuong thuc khong hop le!");
         }
-        return tong;
     }
-    
-    public void hienThiChiTiet() {
-        System.out.println("\n=== CHI TIET DON HANG ===");
-        System.out.println("Khach hang: " + tenKhachHang);
-        System.out.println("So luong san pham: " + danhSachSanPham.size());
-        System.out.printf("Tong tien: %.0f VND\n", tinhTongTien());
+
+    public static void main(String[] args) {
+        QuanLySanPham ql = new QuanLySanPham();
+
+        System.out.println("=== THEM SAN PHAM MOI ===");
+        ql.themSanPham(new SanPhamDienTu("DT001", "iPhone 15", 25000000, "123456789012345", "12 thang"));
+        ql.themSanPham(new SanPhamDienTu("DT002", "Samsung TV", 15000000, "987654321098765", "24 thang"));
+        ql.themSanPham(new SanPhamThucPham("TP001", "Banh quy", 45000, "31/12/2024"));
+        ql.themSanPham(new SanPhamThucPham("TP002", "Sua tuoi", 25000, "30/06/2024"));
+
+        ql.hienThiTatCa();
+
+        System.out.println("\n=== XU LY DON HANG ===");
+
+        DonHang dh1 = new DonHang("Nguyen Van A");
+        dh1.themSanPham(ql.getSanPham(0));
+        dh1.themSanPham(ql.getSanPham(2));
+        dh1.setPhuongThucThanhToan(chonPhuongThuc("tienmat")); 
+        dh1.hienThiChiTiet();
+        dh1.thanhToan();
+
+        DonHang dh2 = new DonHang("Nguyen Van B");
+        dh2.themSanPham(ql.getSanPham(1));
+        dh2.themSanPham(ql.getSanPham(3));
+        dh2.setPhuongThucThanhToan(chonPhuongThuc("thetindung"));
+        dh2.hienThiChiTiet();
+        dh2.thanhToan();
+
+        DonHang dh3 = new DonHang("Tran Thi C");
+        dh3.themDanhSachSanPham(ql.getDanhSach());
+        dh3.setPhuongThucThanhToan(chonPhuongThuc("momo"));
+        dh3.hienThiChiTiet();
+        dh3.thanhToan();
     }
 }
